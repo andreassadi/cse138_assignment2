@@ -7,8 +7,10 @@ const app = express();
 app.use(express.json());
 
 if (forwardingAddress) {
+  console.log("FOLLOWER");
   app.use("/kvs", follower);
 } else {
+  console.log("MAIN");
   app.use("/kvs", main);
 }
 

@@ -20,6 +20,7 @@ router.put("/", (req, res) => {
 
 router.get("/", (req, res) => {
   const key = req.body.key;
+  console.log("GET REQUEST BODY: ", req.body);
 
   if (key in kvs) {
     const val = kvs[key];
