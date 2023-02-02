@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { createProxyMiddleware } = require("http-proxy-middleware");
+const {
+  createProxyMiddleware,
+  fixRequestBody,
+} = require("http-proxy-middleware");
 const forwardingAddress = process.env.FORWARDING_ADDRESS;
 const forwardingURL = `http://${forwardingAddress}`;
 
@@ -13,6 +16,7 @@ const options = {
   changeOrigin: true,
   proxyTimeout: 10000,
   onError: onError,
+  onProxyReq: fixRequestBody,
 };
 
 router.use("/", createProxyMiddleware(options));
