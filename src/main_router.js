@@ -6,7 +6,7 @@ router.put("/", (req, res) => {
   const key = req.body.key;
   const val = req.body.val;
 
-  if (key.length > 200) {
+  if (key.length > 200 || val.length > 200) {
     res.status(400).json({ error: "key or val too long" });
   } else if (key in kvs) {
     const prev = kvs[key];
