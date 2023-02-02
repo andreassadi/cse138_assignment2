@@ -1,27 +1,20 @@
 const express = require("express");
-const axios = require("axios");
 const router = express.Router();
+const { createProxyMiddleware } = require("http-proxy-middleware");
 const forwardingAddress = process.env.FORWARDING_ADDRESS;
-const forwardingURL = `http://${forwardingAddress}/kvs`;
+const forwardingURL = `http://${forwardingAddress}`;
 
-console.log("FORWARDING URL: ", forwardingURL);
+function onError(err, req, res, target) {
+  res.status(503).send({ error: "upstream down", upstream: forwardingAddress });
+}
 
-router.put("/", (req, res) => {});
+const options = {
+  target: forwardingURL,
+  changeOrigin: true,
+  proxyTimeout: 10000,
+  onError: onError,
+};
 
-router.get("/", async (req, res) => {
-  console.log("BODY:", req.body);
-  try {
-    const response = await axios.get(forwardingURL, {
-      headers: { "Content-Type": "application/json" },
-      timeout: 10000,
-      params: req.body,
-    });
-    console.log(response);
-  } catch (error) {
-    console.log("ERROR");
-  }
-});
-
-router.delete("/", (req, res) => {});
+router.use("/", createProxyMiddleware(options));
 
 module.exports = router;

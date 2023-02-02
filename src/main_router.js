@@ -18,11 +18,12 @@ router.put("/", (req, res) => {
   }
 });
 
-router.get("/", (req, res) => {
-  const key = req.body.key;
-  console.log("GET REQUEST BODY: ", req.body);
+router.get("/", async (req, res) => {
+  const key = req.query.key;
 
-  if (key in kvs) {
+  if (key == null) {
+    res.status(400).json({ error: "bad GET" });
+  } else if (key in kvs) {
     const val = kvs[key];
     res.status(200).json({ val: val });
   } else {
@@ -31,9 +32,11 @@ router.get("/", (req, res) => {
 });
 
 router.delete("/", (req, res) => {
-  const key = req.body.key;
+  const key = req.query.key;
 
-  if (key in kvs) {
+  if (key == null) {
+    res.status(400).json({ error: "bad DELETE" });
+  } else if (key in kvs) {
     const prev = kvs[key];
     delete kvs[key];
     res.status(200).json({ prev: prev });
